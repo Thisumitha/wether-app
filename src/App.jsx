@@ -1,33 +1,43 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './style/App.css'
+import SearchBar from "./componets/SearchBar"
+import WeatherInformation from './componets/WeatherInformation'
+import Loading from './componets/Loading'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [IsLoading, setIsLoading] = useState(false);
+  const [isFetched,setisFetched] = useState(false);
+  const [weatherData,setWeatherData] = useState({});
+
+  const handleLocation = () => {
+    const showPosition = (data) => {
+      fetchWeatherData( {"lat": data.coords.latitude,"lon":data.coords.longitude})
+    }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+      alert("This browser doesn't Support Geolocation")
+    }
+}
+
+  const fetchWeatherData = async (latlong) => {
+    const {lat,lon} = latlong
+    setIsLoading(true)
+    const api = `https://api.weatherapi.com/v1/current.json?key=${import.meta.env.VITE_WEATHER_API_KEY}&q=${lat},${lon}`
+    const req = await fetch(api).catch(x=>console.error("Error"))
+    const res = await req.json();
+    setWeatherData(res);
+    setIsLoading(false)
+    setisFetched(true)
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <SearchBar getWeather={fetchWeatherData} geoWeather={handleLocation}/>
+    {IsLoading && <Loading />}
+    
+   {isFetched && <WeatherInformation data={weatherData}/>}
+    
     </>
   )
 }
