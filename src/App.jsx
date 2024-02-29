@@ -5,6 +5,7 @@ import WeatherInformation from './componets/WeatherInformation'
 import Loading from './componets/Loading'
 
 function App() {
+  const key ='35248f84630949449b025113242502'
   const [IsLoading, setIsLoading] = useState(false);
   const [isFetched,setisFetched] = useState(false);
   const [weatherData,setWeatherData] = useState({});
@@ -23,7 +24,7 @@ function App() {
   const fetchWeatherData = async (latlong) => {
     const {lat,lon} = latlong
     setIsLoading(true)
-    const api = `https://api.weatherapi.com/v1/current.json?key=${import.meta.env.VITE_WEATHER_API_KEY}&q=${lat},${lon}`
+    const api = `https://api.weatherapi.com/v1/current.json?key=${key}&q=${lat},${lon}`
     const req = await fetch(api).catch(x=>console.error("Error"))
     const res = await req.json();
     setWeatherData(res);

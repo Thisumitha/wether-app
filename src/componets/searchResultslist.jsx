@@ -22,8 +22,10 @@ const SearchResultslist = ({data,handleClick}) => {
         timeoutid = setTimeout(()=> callback(),1000)
       }
     const fetchData = async (location) => {
+        
         const req = await fetch(`https://api.weatherapi.com/v1/search.json?key=${key}&q=${location}`)
         const res = await req.json();
+        console.log(res)
         return res;
     }
     if(!data.inputList|| data.inputList == undefined) return;
@@ -38,5 +40,6 @@ const SearchResultslist = ({data,handleClick}) => {
         return <li key={i} className="result-text" onClick={()=>handleClick({"lat":x["lat"],"lon":x["lon"]})}>{x.name}, {x.region}, {x.country} </li>
     })} </ul>)
 }
+
 
 export default SearchResultslist
